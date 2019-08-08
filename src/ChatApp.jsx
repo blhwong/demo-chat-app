@@ -122,7 +122,6 @@ class ChatApp extends React.Component {
             <Router>
               <div className="row">
                 <div id="Channels" className="col-sm-4">
-                  <h3>Open Conversations</h3>
                   <ul>
                     {this.state.channels.map((channel) => {
                       return (
@@ -138,33 +137,33 @@ class ChatApp extends React.Component {
                     })}
                   </ul>
                 </div>
-
-                <div id="SelectedChannel" className="col-lg">
-                  <Route
-                    path="/channels/:selected_channel"
-                    render={({ match }) => {
-                      const selectedChannelSid = match.params.selected_channel;
-                      const selectedChannel = this.state.channels.find(
-                        it => it.sid === selectedChannelSid,
-                      );
-                      if (selectedChannel) {
-                        return (
-                          <ChatChannel
-                            channelProxy={selectedChannel}
-                            myIdentity={this.state.name}
-                          />
+                <aside>
+                  <div id="SelectedChannel" className="col-lg">
+                    <Route
+                      path="/channels/:selected_channel"
+                      render={({ match }) => {
+                        const selectedChannelSid = match.params.selected_channel;
+                        const selectedChannel = this.state.channels.find(
+                          it => it.sid === selectedChannelSid,
                         );
-                      }
-                      return <Redirect to="/channels" />;
-                    }}
-                  />
-
-                  <Route
-                    exact
-                    path="/"
-                    render={match => <h4>{this.state.statusString}</h4>}
-                  />
-                </div>
+                        if (selectedChannel) {
+                          return (
+                            <ChatChannel
+                              channelProxy={selectedChannel}
+                              myIdentity={this.state.name}
+                            />
+                          );
+                        }
+                        return <Redirect to="/channels" />;
+                      }}
+                    />
+                    <Route
+                      exact
+                      path="/"
+                      render={match => <h4>{this.state.statusString}</h4>}
+                    />
+                  </div>
+                </aside>
               </div>
             </Router>
           </div>
