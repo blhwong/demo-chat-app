@@ -1,15 +1,15 @@
 import React from 'react';
 import { Client as ChatClient } from 'twilio-chat';
-import api from './api';
-import NameBox from './NameBox.js';
-import ChatChannel from './ChatChannel';
-import './Chat.css';
 import {
   BrowserRouter as Router,
   NavLink,
   Route,
   Redirect,
 } from 'react-router-dom';
+import api from './api';
+import NameBox from './NameBox';
+import ChatChannel from './ChatChannel';
+import './Chat.css';
 
 class ChatApp extends React.Component {
   constructor(props) {
@@ -74,7 +74,6 @@ class ChatApp extends React.Component {
     this.chatClient = await ChatClient.create(this.state.token, {
       logLevel: 'info',
     });
-    console.log(this.chatClient);
     this.setState({ statusString: 'Connecting to Twilio…' });
 
     this.chatClient.on('connectionStateChanged', (state) => {
@@ -91,8 +90,16 @@ class ChatApp extends React.Component {
       if (state === 'disconnected') this.setState({ statusString: 'Disconnected.', chatReady: false });
       if (state === 'denied') this.setState({ statusString: 'Failed to connect.', chatReady: false });
     });
-    this.chatClient.on('channelJoined', (channel) => {
-      this.setState({ channels: [...this.state.channels, channel] });
+    this.chatClient.on('channelJoined', async (channel) => {
+      const messages = await channel.getMessages();
+      const authors = messages.items.map(m => m.author);
+      channel.author = authors.find(author => author !== process.env.IDENTITY);
+      this.setState({
+        channels: [
+          ...this.state.channels,
+          channel,
+        ],
+      });
     });
     this.chatClient.on('channelLeft', (thisChannel) => {
       this.setState({
@@ -102,7 +109,6 @@ class ChatApp extends React.Component {
   };
 
   messagesLoaded = (messagePage) => {
-    console.log(messagePage);
     this.setState({ messages: messagePage.items });
   };
 
@@ -119,7 +125,6 @@ class ChatApp extends React.Component {
                   <h3>Open Conversations</h3>
                   <ul>
                     {this.state.channels.map((channel) => {
-                      console.log(channel);
                       return (
                         <NavLink
                           key={channel.sid}
@@ -127,7 +132,7 @@ class ChatApp extends React.Component {
                           className="list-group-item list-group-item-action"
                           activeClassName="active"
                         >
-                          <li>{channel.friendlyName}</li>
+                          <li>{channel.author}</li>
                         </NavLink>
                       );
                     })}
