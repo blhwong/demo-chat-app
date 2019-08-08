@@ -5,6 +5,19 @@ import MessageBubble from './MessageBubble';
 import styles from './ChatChannel.module.css';
 
 class ChatChannel extends Component {
+  static getDerivedStateFromProps(newProps, oldState) {
+    const logic = oldState.loadingState === 'initializing'
+      || oldState.channelProxy !== newProps.channelProxy;
+    console.log('xxx', oldState.channelProxy, newProps.channelProxy, logic);
+    if (logic) {
+      return {
+        loadingState: 'loading messages',
+        channelProxy: newProps.channelProxy,
+      };
+    }
+    return null;
+  }
+
   constructor(props) {
     super(props);
     this.state = {
@@ -35,6 +48,7 @@ class ChatChannel extends Component {
   };
 
   componentDidMount = () => {
+    this.scrollToBottom();
     if (this.props.channelProxy) {
       this.loadMessagesFor(this.props.channelProxy);
 
@@ -49,6 +63,7 @@ class ChatChannel extends Component {
   };
 
   componentDidUpdate = (oldProps, oldState) => {
+    this.scrollToBottom();
     if (this.props.channelProxy !== oldState.channelProxy) {
       this.loadMessagesFor(this.props.channelProxy);
 
@@ -62,17 +77,8 @@ class ChatChannel extends Component {
     }
   };
 
-  static getDerivedStateFromProps(newProps, oldState) {
-    const logic = oldState.loadingState === 'initializing'
-      || oldState.channelProxy !== newProps.channelProxy;
-    console.log('xxx', oldState.channelProxy, newProps.channelProxy, logic);
-    if (logic) {
-      return {
-        loadingState: 'loading messages',
-        channelProxy: newProps.channelProxy,
-      };
-    }
-    return null;
+  scrollToBottom = () => {
+    this.endOfMessages.scrollIntoView();
   }
 
   messageAdded = (message, targetChannel) => {
@@ -102,6 +108,10 @@ class ChatChannel extends Component {
     });
   };
 
+  endOfMessagesCallback = (el) => {
+    this.endOfMessages = el;
+  }
+
   render = () => (
     <div id="OpenChannel">
       <ul id="messages">
@@ -115,6 +125,7 @@ class ChatChannel extends Component {
             <MessageBubble key={m.index} direction="incoming" message={m} />
           );
         })}
+        <div ref={this.endOfMessagesCallback}/>
       </ul>
       <form onSubmit={this.sendMessage}>
         <input
