@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import styles from './MessageBubble.module.css';
 
 class MessageBubble extends Component {
@@ -15,21 +15,20 @@ class MessageBubble extends Component {
     if (this.props.message.type === 'media') {
       this.props.message.media
         .getContentUrl()
-        .then(url => {
-          this.setState({mediaUrl: url});
+        .then((url) => {
+          this.setState({ mediaUrl: url });
         })
-        .catch(e => this.setState({mediaDownloadFailed: true}));
+        .catch(e => this.setState({ mediaDownloadFailed: true }));
     }
   };
 
   render = () => {
-    const {itemStyle, divStyle} =
-      this.props.direction === 'incoming'
-        ? {
-            itemStyle: styles.received_msg,
-            divStyle: styles.received_withd_msg,
-          }
-        : {itemStyle: styles.outgoing_msg, divStyle: styles.sent_msg};
+    const { itemStyle, divStyle } = this.props.direction === 'incoming'
+      ? {
+        itemStyle: styles.received_msg,
+        divStyle: styles.received_withd_msg,
+      }
+      : { itemStyle: styles.outgoing_msg, divStyle: styles.sent_msg };
 
     const m = this.props.message;
     if (m.type === 'media') {
@@ -63,7 +62,7 @@ class MessageBubble extends Component {
 
 function Media(props) {
   if (props.hasFailed) return <p>(Failed to download media!)</p>;
-  else if (props.url === null) return <p>Downloading…</p>;
+  if (props.url === null) return <p>Downloading…</p>;
   // eslint-disable-next-line
   else return <img className={styles.image} src={props.url} />;
 }

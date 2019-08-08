@@ -1,10 +1,10 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 
 class NameBox extends Component {
   render() {
-    const name = this.props.name;
-    const onNameChanged = this.props.onNameChanged;
-    const logIn = this.props.logIn;
+    const { name } = this.props;
+    const { onNameChanged } = this.props;
+    const { logIn } = this.props;
     return (
       <div>
         <form onSubmit={logIn}>

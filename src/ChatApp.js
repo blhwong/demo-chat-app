@@ -1,6 +1,7 @@
 import React from 'react';
+import { Client as ChatClient } from 'twilio-chat';
+import api from './api';
 import NameBox from './NameBox.js';
-import {Client as ChatClient} from 'twilio-chat';
 import ChatChannel from './ChatChannel';
 import './Chat.css';
 import {
@@ -31,23 +32,23 @@ class ChatApp extends React.Component {
   componentWillMount = () => {
     if (this.state.loggedIn) {
       this.getToken();
-      this.setState({statusString: 'Fetching credentials…'});
+      this.setState({ statusString: 'Fetching credentials…' });
     }
   };
 
-  onNameChanged = event => {
-    this.setState({name: event.target.value});
+  onNameChanged = (event) => {
+    this.setState({ name: event.target.value });
   };
 
-  logIn = event => {
+  logIn = (event) => {
     event.preventDefault();
     if (this.state.name !== '') {
       localStorage.setItem('name', this.state.name);
-      this.setState({loggedIn: true}, this.getToken);
+      this.setState({ loggedIn: true }, this.getToken);
     }
   };
 
-  logOut = event => {
+  logOut = (event) => {
     event.preventDefault();
     this.setState({
       name: '',
@@ -63,10 +64,9 @@ class ChatApp extends React.Component {
     this.channel = null;
   };
 
-  getToken = () => {
-    // Paste your unique Chat token function
-    const myToken = '<Your token here>';
-    this.setState({token: myToken}, this.initChat);
+  getToken = async () => {
+    const token = await api.getToken();
+    this.setState({ token }, this.initChat);
   };
 
   initChat = async () => {
@@ -74,40 +74,40 @@ class ChatApp extends React.Component {
     this.chatClient = await ChatClient.create(this.state.token, {
       logLevel: 'info',
     });
-    this.setState({statusString: 'Connecting to Twilio…'});
+    console.log(this.chatClient);
+    this.setState({ statusString: 'Connecting to Twilio…' });
 
-    this.chatClient.on('connectionStateChanged', state => {
-      if (state === 'connecting')
-        this.setState({statusString: 'Connecting to Twilio…'});
+    this.chatClient.on('connectionStateChanged', (state) => {
+      if (state === 'connecting') this.setState({ statusString: 'Connecting to Twilio…' });
       if (state === 'connected') {
-        this.setState({statusString: 'You are connected.'});
+        this.setState({ statusString: 'You are connected.' });
       }
-      if (state === 'disconnecting')
+      if (state === 'disconnecting') {
         this.setState({
           statusString: 'Disconnecting from Twilio…',
           chatReady: false,
         });
-      if (state === 'disconnected')
-        this.setState({statusString: 'Disconnected.', chatReady: false});
-      if (state === 'denied')
-        this.setState({statusString: 'Failed to connect.', chatReady: false});
+      }
+      if (state === 'disconnected') this.setState({ statusString: 'Disconnected.', chatReady: false });
+      if (state === 'denied') this.setState({ statusString: 'Failed to connect.', chatReady: false });
     });
-    this.chatClient.on('channelJoined', channel => {
-      this.setState({channels: [...this.state.channels, channel]});
+    this.chatClient.on('channelJoined', (channel) => {
+      this.setState({ channels: [...this.state.channels, channel] });
     });
-    this.chatClient.on('channelLeft', thisChannel => {
+    this.chatClient.on('channelLeft', (thisChannel) => {
       this.setState({
         channels: [...this.state.channels.filter(it => it !== thisChannel)],
       });
     });
   };
 
-  messagesLoaded = messagePage => {
-    this.setState({messages: messagePage.items});
+  messagesLoaded = (messagePage) => {
+    console.log(messagePage);
+    this.setState({ messages: messagePage.items });
   };
 
   render() {
-    var loginOrChat;
+    let loginOrChat;
 
     if (this.state.loggedIn) {
       loginOrChat = (
@@ -118,34 +118,39 @@ class ChatApp extends React.Component {
                 <div id="Channels" className="col-sm-4">
                   <h3>Open Conversations</h3>
                   <ul>
-                    {this.state.channels.map(channel => (
-                      <NavLink
-                        key={channel.sid}
-                        to={`/channels/${channel.sid}`}
-                        className="list-group-item list-group-item-action"
-                        activeClassName="active">
-                        <li>{channel.friendlyName}</li>
-                      </NavLink>
-                    ))}
+                    {this.state.channels.map((channel) => {
+                      console.log(channel);
+                      return (
+                        <NavLink
+                          key={channel.sid}
+                          to={`/channels/${channel.sid}`}
+                          className="list-group-item list-group-item-action"
+                          activeClassName="active"
+                        >
+                          <li>{channel.friendlyName}</li>
+                        </NavLink>
+                      );
+                    })}
                   </ul>
                 </div>
 
                 <div id="SelectedChannel" className="col-lg">
                   <Route
                     path="/channels/:selected_channel"
-                    render={({match}) => {
-                      let selectedChannelSid = match.params.selected_channel;
-                      let selectedChannel = this.state.channels.find(
+                    render={({ match }) => {
+                      const selectedChannelSid = match.params.selected_channel;
+                      const selectedChannel = this.state.channels.find(
                         it => it.sid === selectedChannelSid,
                       );
-                      if (selectedChannel)
+                      if (selectedChannel) {
                         return (
                           <ChatChannel
                             channelProxy={selectedChannel}
                             myIdentity={this.state.name}
                           />
                         );
-                      else return <Redirect to="/channels" />;
+                      }
+                      return <Redirect to="/channels" />;
                     }}
                   />
 

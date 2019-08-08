@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import ChatApp from './ChatApp';
 import './App.css';
 
