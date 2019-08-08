@@ -73,26 +73,8 @@
   padding: 5px 10px 5px 12px;
 }
 
-#OpenChannel form input:focus {
+form input:focus {
   outline: none;
-}
-
-button {
-  min-width: 185px;
-  height: 50px;
-  min-height: 50px;
-  padding: 0 30px;
-  font-size: 1rem;
-  font-weight: 600;
-  line-height: 53px;
-  text-align: center;
-  text-transform: uppercase;
-  background-color: #9b9b9b;
-  color: white;
-  opacity: 0.9;
-  border: none;
-  cursor: pointer;
-  white-space: nowrap;
 }
 
 button:hover {
@@ -104,4 +86,5 @@ button:active {
 
 .logout {
   text-align: right;
+  margin: 1em;
 }

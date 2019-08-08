@@ -113,83 +113,76 @@ class ChatApp extends React.Component {
   };
 
   render() {
-    let loginOrChat;
-
-    if (this.state.loggedIn) {
-      loginOrChat = (
-        <div>
-
-          <div className="logout">
-            <form onSubmit={this.logOut}>
-              <button>Log out</button>
-            </form>
-          </div>
-          <div id="ChatWindow" className="container">
-            <div>
-              <Router>
-                <div className="row">
-                  <div id="Channels" className="col-sm-4">
-                    <ul>
-                      {this.state.channels.map((channel) => {
-                        return (
-                          <NavLink
-                            key={channel.sid}
-                            to={`/channels/${channel.sid}`}
-                            className="list-group-item list-group-item-action"
-                            activeClassName="active"
-                          >
-                            <li>{channel.author}</li>
-                          </NavLink>
-                        );
-                      })}
-                    </ul>
-                  </div>
-                  <aside>
-                    <div id="SelectedChannel" className="col-lg">
-                      <Route
-                        path="/channels/:selected_channel"
-                        render={({ match }) => {
-                          const selectedChannelSid = match.params.selected_channel;
-                          const selectedChannel = this.state.channels.find(
-                            it => it.sid === selectedChannelSid,
-                          );
-                          if (selectedChannel) {
-                            return (
-                              <ChatChannel
-                                channelProxy={selectedChannel}
-                                myIdentity={this.state.name}
-                              />
-                            );
-                          }
-                          return <Redirect to="/channels" />;
-                        }}
-                      />
-                      <Route
-                        exact
-                        path="/"
-                        render={match => <h4>{this.state.statusString}</h4>}
-                      />
-                    </div>
-                  </aside>
-                </div>
-              </Router>
-            </div>
-          </div>
-        </div>
-      );
-    } else {
-      loginOrChat = (
-        <div>
-          <NameBox
-            name={this.state.name}
-            onNameChanged={this.onNameChanged}
-            logIn={this.logIn}
-          />
-        </div>
+    if (!this.state.loggedIn) {
+      return (
+        <NameBox
+          name={this.state.name}
+          onNameChanged={this.onNameChanged}
+          logIn={this.logIn}
+        />
       );
     }
 
-    return <div>{loginOrChat}</div>;
+    return (
+      <div>
+        <div className="logout">
+          <form onSubmit={this.logOut}>
+            <button>Log out</button>
+          </form>
+        </div>
+        <div id="ChatWindow" className="container">
+          <div>
+            <Router>
+              <div className="row">
+                <div id="Channels" className="col-sm-4">
+                  <ul>
+                    {this.state.channels.map((channel) => {
+                      return (
+                        <NavLink
+                          key={channel.sid}
+                          to={`/channels/${channel.sid}`}
+                          className="list-group-item list-group-item-action"
+                          activeClassName="active"
+                        >
+                          <li>{channel.author}</li>
+                        </NavLink>
+                      );
+                    })}
+                  </ul>
+                </div>
+                <aside>
+                  <div id="SelectedChannel" className="col-lg">
+                    <Route
+                      path="/channels/:selected_channel"
+                      render={({ match }) => {
+                        const selectedChannelSid = match.params.selected_channel;
+                        const selectedChannel = this.state.channels.find(
+                          it => it.sid === selectedChannelSid,
+                        );
+                        if (selectedChannel) {
+                          return (
+                            <ChatChannel
+                              channelProxy={selectedChannel}
+                              myIdentity={this.state.name}
+                            />
+                          );
+                        }
+                        return <Redirect to="/channels" />;
+                      }}
+                    />
+                    <Route
+                      exact
+                      path="/"
+                      render={match => <h4>{this.state.statusString}</h4>}
+                    />
+                  </div>
+                </aside>
+              </div>
+            </Router>
+          </div>
+        </div>
+      </div>
+    );
   }
 }
 
