@@ -117,7 +117,6 @@ class ChatChannel extends Component {
         })}
       </ul>
       <form onSubmit={this.sendMessage}>
-        <label htmlFor="message">Message: </label>
         <input
           type="text"
           name="message"
@@ -126,8 +125,8 @@ class ChatChannel extends Component {
           disabled={this.state.loadingState !== 'ready'}
           onChange={this.onMessageChanged}
           value={this.state.newMessage}
+          placeholder="Type a message..."
         />
-        <button>Send</button>
       </form>
       <Dropzone onDrop={this.onDrop} accept="image/*">
         {({ getRootProps, getInputProps, isDragActive }) => (

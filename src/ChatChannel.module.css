@@ -2,10 +2,9 @@
   position: absolute;
   width: 90%;
   margin: auto;
-  height: 5em;
+  height: 3em;
   background-color: #fff;
-  border: 2px dashed grey;
-  border-radius: 2em;
+  border: 1px dashed grey;
   opacity: 0.3;
   visibility: visible;
   display: block;
@@ -15,7 +14,6 @@
 }
 
 .Dropzone p {
-  display: inline-block;
   vertical-align: middle;
   line-height: normal;
 }

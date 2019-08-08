@@ -1,9 +1,4 @@
-div {
-  /* border: 1px solid black;*/
-}
-
 #ChatWindow {
-  border: 1px solid #eee;
   border-radius: 8px;
 }
 
@@ -16,8 +11,12 @@ div {
 #messages {
   padding: 0;
   margin: 1em 0.5em;
+  margin-bottom: 0;
   height: 70vh;
-  overflow: auto;
+  overflow: scroll;
+}
+#messages::-webkit-scrollbar {
+  display: none;
 }
 
 .nav-pills .nav-item {
@@ -36,9 +35,17 @@ div {
 }
 
 #Channels ul {
-  border-bottom: 1px solid #eee;
+  border: 1px solid #eee;
+  border-left: 0;
+  border-right: 0;
   margin: 0;
   padding: 2em 0.5em;
+}
+
+#Channels ul li {
+  font-weight: bold;
+  font-size: 14px;
+  color: #646464;
 }
 
 #Channels ul a {
@@ -48,5 +55,53 @@ div {
 
 .row aside {
   flex: 5;
-  border-left: 1px solid #eee;
+  border: 1px solid #eee;
+}
+
+#OpenChannel form {
+  display: flex;
+  height: 3em;
+}
+
+#OpenChannel form input {
+  width: 100%;
+  border: 1px solid #eee;
+  border-bottom: 0;
+  border-left: 0;
+  border-right: 0;
+  font-size: 14px;
+  padding: 5px 10px 5px 12px;
+}
+
+#OpenChannel form input:focus {
+  outline: none;
+}
+
+button {
+  min-width: 185px;
+  height: 50px;
+  min-height: 50px;
+  padding: 0 30px;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 53px;
+  text-align: center;
+  text-transform: uppercase;
+  background-color: #9b9b9b;
+  color: white;
+  opacity: 0.9;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+button:hover {
+  opacity: 1;
+}
+button:active {
+  opacity: 0.8;
+}
+
+.logout {
+  text-align: right;
 }

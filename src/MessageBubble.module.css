@@ -10,18 +10,19 @@
 }
 .received_withd_msg > div {
   background: #ebebeb none repeat scroll 0 0;
-  border-radius: 3px;
+  border-radius: 5px;
   color: #646464;
   font-size: 14px;
   margin: 0;
   padding: 5px 10px 5px 12px;
-  width: 100%;
 }
 .time_date {
   color: #747474;
   display: block;
   font-size: 12px;
-  margin: 8px 0 0;
+  margin-bottom: 8px;
+  text-align: right;
+  width: 99%;
 }
 .received_withd_msg {
   width: 75%;
@@ -29,16 +30,15 @@
 
 .sent_msg > div {
   background: #05728f none repeat scroll 0 0;
-  border-radius: 3px;
+  border-radius: 5px;
   font-size: 14px;
   margin: 0;
   color: #fff;
   padding: 5px 10px 5px 12px;
-  width: 100%;
+  width: 98%;
 }
 .outgoing_msg {
   overflow: hidden;
-  margin: 26px 0 26px;
 }
 .sent_msg {
   display: inline-block;
