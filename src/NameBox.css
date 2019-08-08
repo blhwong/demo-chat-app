@@ -16,6 +16,5 @@
   margin-bottom: 2vh;
   width: 185px;
   height: 3em;
-  padding: 5px 10px 5px 12px;
-  font-size: 14px;
+  border-radius: 5px;
 }

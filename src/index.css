@@ -30,3 +30,22 @@ button {
   cursor: pointer;
   white-space: nowrap;
 }
+
+button:hover {
+  opacity: 1;
+}
+
+button:active {
+  opacity: 0.8;
+}
+
+form input {
+  border: 1px solid #eee;
+  padding: 5px 10px 5px 12px;
+  font-size: 14px;
+
+}
+
+form input:focus {
+  outline: none;
+}
