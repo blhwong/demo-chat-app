@@ -1,4 +1,5 @@
 require('dotenv').config();
+global.Promise = require('bluebird');
 const express = require('express');
 const bodyParser = require('body-parser');
 const twilio = require('twilio');
@@ -29,19 +30,55 @@ app.use((req, res, next) => {
 });
 
 app.get('/post-event', (req, res) => {
-  console.log(req);
-  const { ChannelSid } = req.query;
-  return client.chat.services(process.env.SERVICE_SID)
-    .channels(ChannelSid)
-    .members
-    .create({ identity: process.env.IDENTITY })
-    .then((member) => {
-      console.log(`Successfully added member ${member.sid}`);
-      res.sendStatus(200);
+  const { ChannelSid, From } = req.query;
+  const channel = client
+    .chat
+    .services(process.env.SERVICE_SID)
+    .channels(ChannelSid);
+  let members = [];
+  return Promise.all([
+    channel.fetch(),
+    channel.members.list(),
+  ])
+    .spread((retrievedChannel, retrievedMembers) => {
+      members = retrievedMembers;
+      if (retrievedChannel.friendlyName) {
+        console.log(`Channel has friendlyName ${retrievedChannel.friendlyName}`);
+        return Promise.resolve();
+      }
+      if (From !== process.env.IDENTITY) {
+        console.log(`Updating channel name to ${From}`);
+        return channel.update({ friendlyName: From });
+      }
+      const friendlyName = members
+        .map(m => m.identity)
+        .find(identity => identity !== process.env.IDENTITY);
+      if (friendlyName) {
+        console.log(`Friendly name found through members ${friendlyName}`);
+        return channel.update({ friendlyName });
+      }
+      console.log('Cannot set channel name at this time');
+      return Promise.resolve();
+    })
+    .then(() => {
+      if (members.find(m => m.identity === process.env.IDENTITY)) {
+        console.log(`${process.env.IDENTITY} already joined`);
+        return res.sendStatus(200);
+      }
+      return channel
+        .create({ identity: process.env.IDENTITY })
+        .then((member) => {
+          console.log(`Successfully added member ${member.sid}`);
+          return res.sendStatus(200);
+        })
+        .catch((err) => {
+          console.error(`Cannot add member ${err}`);
+          return res.sendStatus(200);
+        });
     })
     .catch((err) => {
-      console.error(`Couldn't add member. ${err}`);
-      res.sendStatus(200);
+      console.error(err);
+      return res.sendStatus(200);
     });
 });
 

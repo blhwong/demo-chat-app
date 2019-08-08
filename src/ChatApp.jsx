@@ -90,10 +90,7 @@ class ChatApp extends React.Component {
       if (state === 'disconnected') this.setState({ statusString: 'Disconnected.', chatReady: false });
       if (state === 'denied') this.setState({ statusString: 'Failed to connect.', chatReady: false });
     });
-    this.chatClient.on('channelJoined', async (channel) => {
-      const messages = await channel.getMessages();
-      const authors = messages.items.map(m => m.author);
-      channel.author = authors.find(author => author !== process.env.IDENTITY);
+    this.chatClient.on('channelJoined', (channel) => {
       this.setState({
         channels: [
           ...this.state.channels,
@@ -144,7 +141,7 @@ class ChatApp extends React.Component {
                           className="list-group-item list-group-item-action"
                           activeClassName="active"
                         >
-                          <li>{channel.author}</li>
+                          <li>{channel.friendlyName}</li>
                         </NavLink>
                       );
                     })}
